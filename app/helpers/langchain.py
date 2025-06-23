@@ -1,4 +1,5 @@
 import os
+import asyncio
 from dotenv import load_dotenv
 from langchain.document_loaders import DirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -89,3 +90,10 @@ def langchain_directory(query: str):
   
   # response = qa_chain.run(query)
   # return response
+  
+async def chat_response_generator(response:str):
+    words = response.split()
+      
+    for word in words:
+        yield word + " "
+        await asyncio.sleep(0.02)

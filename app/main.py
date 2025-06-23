@@ -4,9 +4,7 @@ from app.routers.chat import router as chat_router
 
 app = FastAPI(title="ONBI API")
 
-origins = [
-  "http://localhost:8000"
-]
+origins = ["*"]
 
 app.add_middleware(
   CORSMiddleware,

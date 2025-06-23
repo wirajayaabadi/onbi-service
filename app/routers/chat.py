@@ -1,10 +1,11 @@
 import os
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 from app.models.chat import Chat
-from app.services.chat import run_conversation
+from app.services.chat import run_conversation, stream_conversation_generator
 from fastapi.responses import JSONResponse
 from app.models.directory import Directory
-from app.helpers.langchain import langchain_directory
+from app.helpers.langchain import chat_response_generator
 
 # Import the celery task we defined
 from app.worker.tasks import process_directory
@@ -41,9 +42,12 @@ async def chat(request: Chat):
     # response = langchain_directory(request.message)
     response = run_conversation(request)
 
-    return JSONResponse(
-        status_code=202,
-        content={
-            "message": response
-        }
-    )
+    return StreamingResponse(stream_conversation_generator(request), media_type="text/event-stream")
+    
+    # return StreamingResponse(chat_response_generator(response), media_type="text/plain")
+    # return JSONResponse(
+    #     status_code=202,
+    #     content={
+    #         "message": response
+    #     }
+    # )
